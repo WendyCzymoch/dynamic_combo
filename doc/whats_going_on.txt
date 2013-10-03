@@ -1,0 +1,67 @@
+What it does
+============
+Start the rails server and look at localhost:3000/static_pages/home. Simple page is shown and when you change the
+value in the combo box, the text is dynamically changed showing the selected city.
+
+How it works
+============
+When you request the above page, it is routed to the 'home' method of controller and static_pages/home.html.erb is
+displayed.
+
+This code creates the combo box:
+--------------------------------
+
+<div id="select_div">
+    <select name="city_id" id="city_id">
+      <option value="0">Lisbon</option>
+      <option value="1">Madrid</option>
+      <option value="2">Prague</option>
+    </select>
+</div>
+
+
+This is the <div> that gets updated:
+------------------------------------
+
+<div id="result_div">
+  <h4>Lisbon is selected</h4>
+</div>
+
+This is the script that watches for the change and does AJAX call to the controller:
+------------------------------------------------------------------------------------
+
+<script>
+  $(document).ready(function() {
+    $('#city_id').change(function() {
+        $.ajax({
+           url: "<%= update_text_path %>",
+           data: {
+               city_name: $("#city_id option:selected").text()
+            },
+           dataType: "script"
+        });
+    });
+  });
+</script>
+
+Some more details about the script:
+-----------------------------------
+
+$('#city_id').change(function() ... this waits for the change of a specific control with id: city_id
+
+url: "<%= update_text_path %>" ... path and method that gets called, when the change is done. this path is defined in
+                                   routing, see config/routes.rb: get "static_pages/update_text", as: "update_text".
+                                   This line creates a named value called update_text_path that routes to
+                                   static_pages/update text method
+
+city_name: $("#city_id option:selected").text() ... retrieves the selected text from the combo; if you need to get the
+                                                    option value, you can use city_id: $('#city_id').val()
+
+AJAX call processing
+--------------------
+
+When the controller method static_pages/update_text (controllers/static_pages_controller.rb) gets called,
+it retrieves the city name from the parameter using params[:city_name] and stores it into @city_text. As this is an
+AJAX call, the view that gets processed has to be .js, so after the city name is stored in the controller,
+the update_text.js.erb gets called (views/static_pages/update_text.js.erb). In this file the html of "result_div"
+gets updated, causing the text to update on the HTML page.

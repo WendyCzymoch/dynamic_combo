@@ -1,0 +1,28 @@
+<h1>dynamic combo</h1>
+<p>Playing with dynamic AJAX page updates after the combo box selection change</p>
+
+<div id="select_div">
+    <select name="city_id" id="city_id">
+      <option value="0">Lisbon</option>
+      <option value="1">Madrid</option>
+      <option value="2">Prague</option>
+    </select>
+</div>
+
+<div id="result_div">
+  <h4>Lisbon is selected</h4>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#city_id').change(function() {
+        $.ajax({
+           url: "<%= update_text_path %>",
+           data: {
+               city_name: $("#city_id option:selected").text()
+           },
+           dataType: "script"
+        });
+    });
+  });
+</script>

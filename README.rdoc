@@ -1,0 +1,3 @@
+== dynamic_combo example
+
+see doc/whats_going_on.txt
